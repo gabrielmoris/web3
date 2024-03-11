@@ -18,3 +18,9 @@ Its aim is to create the "blockchain singularity". It has an algorithm to escale
 # Installation and setup for web3
 
 [Documentation](https://docs.google.com/document/d/e/2PACX-1vTNicu-xuf4EiLAehHIqgfpjAnPjzqMGT-xpZVvYaAWNyvzYK_Ceve_me4PVRIxpzH7ea5PAX9NxGwY/pub)
+
+# Motoko Language
+
+It is the language used for internet computer.
+
+The class that creates the canister is caller actor

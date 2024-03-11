@@ -39,9 +39,10 @@ actor DBank {
     let currentTime = Time.now();
     let timeElapsedNS = currentTime - startTime;
     let timeElapsedS = timeElapsedNS / 1000000000;
+    let timeElapsedHours = timeElapsedS / (60 * 60);
 
-        // This equation is to do the compound value (economics) Amount = Amount * (1 + %interests)**time
-    currentValue := currentValue * (1.01 ** Float.fromInt(timeElapsedS));
+    // This equation is to do the compound value (economics) Amount = Amount * (1 + %interests)**time
+    currentValue := currentValue * (1.005 ** Float.fromInt(timeElapsedHours));
     startTime := currentTime;
   };
 

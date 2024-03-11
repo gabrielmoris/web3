@@ -23,4 +23,6 @@ Its aim is to create the "blockchain singularity". It has an algorithm to escale
 
 It is the language used for internet computer.
 
-The class that creates the canister is caller actor
+The class that creates the canister is caller actor.
+
+I can call public Funcrions with `dfx caniester call <canister name> <funcrtion name> '(args)'` for example `dfx caniester call dbank topUp(57)`

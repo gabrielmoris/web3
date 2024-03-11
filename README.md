@@ -26,3 +26,26 @@ It is the language used for internet computer.
 The class that creates the canister is caller actor.
 
 I can call public Funcrions with `dfx caniester call <canister name> <funcrtion name> '(args)'` for example `dfx caniester call dbank topUp(57)`
+
+Private functions are not be accessed outside the class.
+
+When it is regarding functions there are 2 kind of functions Updates an queries.
+
+- Updates needs are asynchronous and persistent but expensivein resources.
+
+```Motoko
+  public func topUp(number: Nat){
+    currentValue +=number;
+    Debug.print(debug_show(currentValue));
+  };
+```
+
+- Query calls doesnt change the state and are faster
+
+```Motoko
+   public query func checkBalance():async Nat {
+     return currentValue;
+   };
+```
+
+- **Orthogonal Persistance** is the hability to hold on to state over many cycles of updates. I make changes in variables, I change the code and the changes in the variables would stay changed as if it were a Databank. It can be used by the keyword _stable_ `stable var currentValue :Nat = 300;`

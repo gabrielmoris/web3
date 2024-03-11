@@ -23,13 +23,13 @@ Its aim is to create the "blockchain singularity". It has an algorithm to escale
 
 It is the language used for internet computer.
 
-The class that creates the canister is caller actor.
+- The class that creates the canister is caller actor.
 
-I can call public Funcrions with `dfx caniester call <canister name> <funcrtion name> '(args)'` for example `dfx caniester call dbank topUp(57)`
+- I can call public Funcrions with `dfx caniester call <canister name> <funcrtion name> '(args)'` for example `dfx caniester call dbank topUp(57)`
 
-Private functions are not be accessed outside the class.
+  Private functions are not be accessed outside the class.
 
-When it is regarding functions there are 2 kind of functions Updates an queries.
+* When it is regarding functions there are 2 kind of functions Updates an queries.
 
 - Updates needs are asynchronous and persistent but expensivein resources.
 

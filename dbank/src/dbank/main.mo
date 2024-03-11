@@ -3,55 +3,61 @@ import Time "mo:base/Time";
 import Float "mo:base/Float";
 
 actor DBank {
-  stable var currentValue :Float = 300;
-  // currentValue := 100;
+  stable var currentValue: Float = 0;
+  // currentValue := 300;
+  // Debug.print(debug_show(currentValue));
 
   stable var startTime = Time.now();
- Debug.print(debug_show(startTime));
-  let id =1213123123;
-  // id := lklk This wouldnt work
+  startTime := Time.now();
+  Debug.print(debug_show(startTime));
 
- 
-  Debug.print(debug_show(id));
+  let id = 2348923840928349;
+  // Debug.print(debug_show(id));
 
-// this is a private function
-  func topUpPrivate(number: Float){
-    currentValue +=number;
-    Debug.print(debug_show(currentValue));
+  public func topUp(amount: Float) {
+    currentValue += amount;
+    // Debug.print(debug_show(currentValue));
   };
-  topUpPrivate(57);
 
-// this is a public function
-  public func topUp(number: Float){
-    currentValue +=number;
-    Debug.print(debug_show(currentValue));
-  };
-  
-  public func withdrawl(amount: Float){
+  public func withdraw(amount: Float) {
     let tempValue: Float = currentValue - amount;
-    if(tempValue <=0){
-      currentValue -=amount;
-      Debug.print(debug_show(currentValue));
-    }else{
-      Debug.print("You have no sufficient value in your account")
+    if (tempValue >= 0) {
+      currentValue -= amount;
+      // Debug.print(debug_show(currentValue));
+    } else {
+      Debug.print("You have no enough money in your account.")
     }
   };
 
-  public query func checkBalance():async Float {
+  public query func checkBalance(): async Float {
     return currentValue;
   };
 
-  public func compound(){
+  // topUp();
+
+  public func compound() {
     let currentTime = Time.now();
-
     let timeElapsedNS = currentTime - startTime;
-
     let timeElapsedS = timeElapsedNS / 1000000000;
 
-    // This equation is to do the compound value (economics) Amount = Amount * (1 + %interests)**time
-
+        // This equation is to do the compound value (economics) Amount = Amount * (1 + %interests)**time
     currentValue := currentValue * (1.01 ** Float.fromInt(timeElapsedS));
-    startTime := currentTime
+    startTime := currentTime;
   };
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

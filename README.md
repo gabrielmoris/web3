@@ -49,3 +49,23 @@ It is the language used for internet computer.
 ```
 
 - **Orthogonal Persistance** is the hability to hold on to state over many cycles of updates. I make changes in variables, I change the code and the changes in the variables would stay changed as if it were a Databank. It can be used by the keyword _stable_ `stable var currentValue :Nat = 300;`
+
+# Deploying to the ICP Live Blockchain
+
+- To be allowed to use the ICP computer network I need ICP tokens, this tokes hav a lifecycle. To get this tokens:
+
+1. go to [this page](https://faucet.dfinity.org/)
+2. click on REQUEST CYCLES and then click on ACCEPT INVITE to join the ICP Developer Community official Discord channel.
+3. head over to the #cycles-faucet channel and click on the COMPLETE button to agree to the community rules
+4. type /request in the message box and hit send
+5. Choose from the drop down lists and complete the survey. (You can chose Motoko if you're asked which programming language you will use) fill up the popup that appears afterwards
+6. you will get a coupon code
+7. go back to the Cycles Faucet page and click Next, then paste in your coupon code
+8. Go into your Terminal and check that you have at least dfx 0.12.0 installed. `dfx --version` if your version is lower than 0.12.0 then you can upgrade to the latest version using the command: `sudo dfx upgrade`
+9. run in terminal `dfx wallet --network ic redeem-faucet-coupon <YOUR COUPON CODE FROM FAUCET BOT>` (KEEP THIS ID OF THE WALLET)
+10. run `dfx wallet --network=ic balance` to check how many coins do I have
+11. Go to the directory of the ITC app and write `dfx identity --network ic set-wallet --force <Wallet ID>`
+12. Register device on IPC `dfx identity get-principal` and then run `dfx canister --network ic call "<wallet id>" authorize '(principal"<principal id>")'`
+
+13. AND LAST: to deploy run `dfx deploy --network ic`. To see the app run `dfx canister --network ic id dbank_assets`
+14. to update the canister run `dfx deploy --network ic` again. It costs less than the deployment

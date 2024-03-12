@@ -69,3 +69,36 @@ It is the language used for internet computer.
 
 13. AND LAST: to deploy run `dfx deploy --network ic`. To see the app run `dfx canister --network ic id dbank_assets`
 14. to update the canister run `dfx deploy --network ic` again. It costs less than the deployment
+15. the app will be available in `<Canister ID>.raw.ic0.app`
+
+# Deploying a static website to the ICP Live Blockchain
+
+1. Put the files in a folder called **assets**
+2. create a json file called `dfx,json`
+
+```json
+{
+  "canisters": {
+    "website": {
+      "type": "assets",
+      "source": ["assets"]
+    }
+  }
+}
+```
+
+3. The process will collapse all the folder structure, so in the index.html we need to delete all references to the folders because everything will be in a flat tructure
+4. run `dfx deploy --network ic`
+5. run `dfx canister --network ic id website`. The id is the one we choose in the json
+6. the app will be available in `<Canister ID>.raw.ic0.app`
+
+# Deleting Canisters in the ICP
+
+1. In the Terminal, go to the project's top level directory and type the following: `dfx canister --network ic status --all`
+   This will list all the deployed canisters and all relevant info (including canister name(s) and cycle balance(s)) that is associated with the project. If you get back Error: Cannot find canister id, you are probably in the wrong directory.
+
+2. Once you see the status messages, then type: `dfx canister --network ic stop --all`
+   You will see the message: "Stopping code for canister..." for each network-deployed canister.
+
+3. Then type: `dfx canister --network ic delete --all`
+   You will then get messages confirming the deleted the canister(s) and that the cycles have been returned to your Cycle Wallet. If you go and reload your Cycle Wallet and see an increased balance, then it worked!

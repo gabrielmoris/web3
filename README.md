@@ -102,3 +102,35 @@ It is the language used for internet computer.
 
 3. Then type: `dfx canister --network ic delete --all`
    You will then get messages confirming the deleted the canister(s) and that the cycles have been returned to your Cycle Wallet. If you go and reload your Cycle Wallet and see an increased balance, then it worked!
+
+# ICP and react app
+
+1. Copy the indeh.html, index.jsx and components in `dkeeper/src/dkeeper_assets/src`
+2. Copy the styles.css in `dkeeper/src/dkeeper_assets/assets`
+3. In webpack.config.js modify:
+   in line 44: `index: path.join(__dirname, asset_entry).replace(/\.html$/, ".jsx"),` instead `    index: path.join(__dirname, asset_entry).replace(/\.html$/, ".js"),`
+   in line 71 - 76 uncomment:
+   ```javascript
+    module: {
+    rules: [
+      { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
+      { test: /\.css$/, use: ["style-loader", "css-loader"] },
+    ],
+   },
+   ```
+4. Add a tsconfig.json with:
+
+```json
+{
+  "compilerOptions": {
+    "target": "es2018" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */,
+    "lib": ["ES2018", "DOM"] /* Specify library files to be included in the compilation. */,
+    "allowJs": true /* Allow javascript files to be compiled. */,
+    "jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
+  },
+  "include": ["src/**/*"]
+}
+```
+
+5. run `dfx start` and then in other console in the same folder `npm install` and finally `dfx deploy`
+6. run `npm start`

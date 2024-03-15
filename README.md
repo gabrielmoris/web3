@@ -134,3 +134,10 @@ It is the language used for internet computer.
 
 5. run `dfx start` and then in other console in the same folder `npm install` and finally `dfx deploy`
 6. run `npm start`
+
+# Token creation
+
+Inside `src/token/main.mo` will be all backend logic.
+to get the identification run `dfx identity get-principal`. The principal id of the default user. We will assing all the tokens to this id.
+
+The rest of this Docs is inside [The project README](token-cration/README.md)

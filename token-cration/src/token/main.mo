@@ -1,6 +1,7 @@
 import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
 import Nat "mo:base/Nat";
+import Debug "mo:base/Debug";
 actor Token {
     // this string is the token that i got from the command dfx identity get-principal
     var owner : Principal = Principal.fromText("xngfm-myszx-s5nlj-mk7tf-igsfy-arorl-g27yz-pvykc-rzzlz-uv6wx-jqe");
@@ -31,5 +32,16 @@ actor Token {
 
     public query func getSymbol():async Text{
         return symbol;
+    };
+
+    // https://internetcomputer.org/docs/current/motoko/main/sharing/#the-shared-keyword
+    public shared (msg) func payOut(amount:Nat): async Text{
+        // Debug.print(debug_show(msg.caller));
+    if (balances.get(msg.caller) == null){
+        balances.put(msg.caller, amount);
+        return "Sucess";
+    } else{
+        return "You already claimed the Tokens!";
+    }
     };
 };

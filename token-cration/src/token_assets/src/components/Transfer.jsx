@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { token } from "../../../declarations/token";
+import { token, canisterId, createActor } from "../../../declarations/token";
+import { AuthClient } from "@dfinity/auth-client";
 import { Principal } from "@dfinity/principal";
 
 function Transfer() {
@@ -12,6 +13,20 @@ function Transfer() {
     setIsTransfering(true);
     const recipient = Principal.fromText(recipientID);
     const amountToTransfer = Number(amount);
+
+    // This only would work if the app is deployed inside the IC network, in local cant work, that is why I use the token instead
+    // Deployment guideline is inside the README.md
+    // Get the authClient from IC
+    // const authClient = await AuthClient.create();
+    // const identity = await authClient.getIdentity();
+
+    // // Create the canister with the auth client to get the coins
+    // const authenticatedCanister = createActor(canisterId, {
+    //   agentOptions: {
+    //     identity,
+    //   },
+    // });
+    // const result = await authenticatedCanister.transfer(recipient, amountToTransfer);
     const res = await token.transfer(recipient, amountToTransfer);
     setBtnText(res);
     setIsTransfering(false);

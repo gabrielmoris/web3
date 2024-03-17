@@ -4,12 +4,11 @@ import Faucet from "./Faucet";
 import Balance from "./Balance";
 import Transfer from "./Transfer";
 
-function App() {
-
+function App({ logedInPrincipal }) {
   return (
     <div id="screen">
       <Header />
-      <Faucet />
+      <Faucet userPrincipal={logedInPrincipal} />
       <Balance />
       <Transfer />
     </div>

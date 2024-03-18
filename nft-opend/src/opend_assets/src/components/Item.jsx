@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../assets/logo.png";
 import { HttpAgent, Actor } from "@dfinity/agent";
 import { idlFactory } from "../../../declarations/nft";
 import { Principal } from "@dfinity/principal";
@@ -11,11 +10,11 @@ function Item({ id }) {
 
   const principalId = Principal.fromText(id);
   const localHost = "http://localhost:8080/";
-  const httpAgent = new HttpAgent({ host: localHost });
+  const HTTPagent = new HttpAgent({ host: localHost });
 
   async function loadNFT() {
     const NFTActor = await Actor.createActor(idlFactory, {
-      agent: httpAgent,
+      agent: HTTPagent,
       canisterId: principalId,
     });
 
@@ -24,6 +23,7 @@ function Item({ id }) {
     const imageData = await NFTActor.getAsset();
     const imgContent = new Uint8Array(imageData);
     const image = URL.createObjectURL(new Blob([imgContent.buffer], { type: "image/png" }));
+
     setName(NFTName);
     setOwner(NFTOwner.toText());
     setImg(image);

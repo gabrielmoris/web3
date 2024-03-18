@@ -8,14 +8,14 @@ function Item({ id }) {
   const [owner, setOwner] = useState("");
   const [img, setImg] = useState("");
 
-  const principalId = Principal.fromText(id);
+  // const principalId = Principal.fromText(id);
   const localHost = "http://localhost:8080/";
   const HTTPagent = new HttpAgent({ host: localHost });
 
   async function loadNFT() {
     const NFTActor = await Actor.createActor(idlFactory, {
       agent: HTTPagent,
-      canisterId: principalId,
+      canisterId: id,
     });
 
     const NFTName = await NFTActor.getName();

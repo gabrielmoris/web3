@@ -7,6 +7,7 @@ import Debug "mo:base/Debug";
 import HashMap "mo:base/HashMap";
 import List "mo:base/List";
 import Nat "mo:base/Nat";
+import Bool "mo:base/Bool";
 
 // https://internetcomputer.org/docs/current/motoko/main/base/ExperimentalCycles/
 actor OpenD {
@@ -75,5 +76,13 @@ actor OpenD {
 
     public query func getOpendCanisterID():async Principal{
         return Principal.fromActor(OpenD);
+    };
+
+    public query func isListed(id: Principal) : async Bool{
+        if(mapOfListings.get(id)== null){
+            return false;
+        }else{
+            return true;
+        };
     };
 };

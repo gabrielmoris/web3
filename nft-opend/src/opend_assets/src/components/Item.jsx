@@ -4,6 +4,8 @@ import { idlFactory } from "../../../declarations/nft";
 import { Principal } from "@dfinity/principal";
 import Button from "./Button";
 import { opend } from "../../../declarations/opend";
+import CURRENT_USER_ID from "../index";
+import PriceLabel from "./PriceLabel";
 
 function Item({ id, role }) {
   const [name, setName] = useState();
@@ -14,6 +16,7 @@ function Item({ id, role }) {
   const [loaderHidden, setLoaderHidden] = useState(true);
   const [blur, setBlur] = useState();
   const [sellStatus, setSellStatus] = useState();
+  const [priceLabel, setPriceLabel] = useState();
 
   // const principalId = Principal.fromText(id);
   const localHost = "http://localhost:8080/";
@@ -38,13 +41,24 @@ function Item({ id, role }) {
     setOwner(NFTOwner.toText());
     setImg(image);
 
-    const nftIsListed = await opend.isListed(id);
-    if (nftIsListed) {
-      setOwner("OpenD");
-      setBlur({ filter: "blur(4px)" });
-      setSellStatus("Listed");
-    } else {
-      setButton(<Button handleClick={handleSell} text={"Sell"} />);
+    if (role === "collection") {
+      const nftIsListed = await opend.isListed(id);
+      if (nftIsListed) {
+        setOwner("OpenD");
+        setBlur({ filter: "blur(4px)" });
+        setSellStatus("Listed");
+      } else {
+        setButton(<Button handleClick={handleSell} text={"Sell"} />);
+      }
+    } else if (role === "discover") {
+      const originalOwner = await opend.getOriginalOwner(id);
+
+      if (originalOwner.toText() != CURRENT_USER_ID.toText()) {
+        setButton(<Button handleClick={handleBuy} text={"Buy"} />);
+      }
+
+      const price = await opend.getListedNFTPrice(id);
+      setPriceLabel(<PriceLabel sellPrice={price.toString()} />);
     }
   }
 
@@ -74,6 +88,10 @@ function Item({ id, role }) {
     setLoaderHidden(true);
   };
 
+  const handleBuy = async () => {
+    console.log("buy was triggered");
+  };
+
   useEffect(() => {
     loadNFT();
   }, []);
@@ -89,6 +107,7 @@ function Item({ id, role }) {
           <div></div>
         </div>
         <div className="disCardContent-root">
+          {priceLabel}
           <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
             {name}
             <span className="purple-text"> {sellStatus}</span>

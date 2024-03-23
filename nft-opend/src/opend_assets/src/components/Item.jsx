@@ -6,6 +6,7 @@ import Button from "./Button";
 import { opend } from "../../../declarations/opend";
 import CURRENT_USER_ID from "../index";
 import PriceLabel from "./PriceLabel";
+import { idlFactory as tokenIdlFactory } from "../../../declarations/token"; // copied /src/declarations/token in /src/declarations inside this project
 
 function Item({ id, role }) {
   const [name, setName] = useState();
@@ -17,6 +18,7 @@ function Item({ id, role }) {
   const [blur, setBlur] = useState();
   const [sellStatus, setSellStatus] = useState();
   const [priceLabel, setPriceLabel] = useState();
+  const [shouldDisplay, setShouldDisplay] = useState(true);
 
   // const principalId = Principal.fromText(id);
   const localHost = "http://localhost:8080/";
@@ -90,6 +92,22 @@ function Item({ id, role }) {
 
   const handleBuy = async () => {
     console.log("buy was triggered");
+    setLoaderHidden(false);
+    const tokenActor = await Actor.createActor(tokenIdlFactory, {
+      agent: HTTPagent,
+      canisterId: Principal.fromText("st75y-vaaaa-aaaaa-aaalq-cai"), // after run `dfx canister id token` in the console of token creation project
+    });
+
+    const sellerId = await opend.getOriginalOwner(id);
+    const itemPrice = await opend.getListedNFTPrice(id);
+    console.log(tokenActor);
+    const result = await tokenActor.transfer(sellerId, itemPrice);
+    if (result === "Success") {
+      const transferResult = opend.completePurchase(id, sellerId, CURRENT_USER_ID);
+      console.log(transferResult);
+    }
+    setShouldDisplay(false);
+    setLoaderHidden(true);
   };
 
   useEffect(() => {
@@ -97,7 +115,7 @@ function Item({ id, role }) {
   }, []);
 
   return (
-    <div className="disGrid-item">
+    <div style={{ display: shouldDisplay ? "inline" : "none" }} className="disGrid-item">
       <div className="disPaper-root disCard-root makeStyles-root-17 disPaper-elevation1 disPaper-rounded">
         <img className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img" src={img} style={blur} />
         <div className="lds-ellipsis" hidden={loaderHidden}>

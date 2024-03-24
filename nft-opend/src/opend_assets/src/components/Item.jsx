@@ -4,13 +4,21 @@ import { idlFactory } from "../../../declarations/nft";
 import { Principal } from "@dfinity/principal";
 import Button from "./Button";
 import { opend } from "../../../declarations/opend";
+import CURRENT_USER_ID from "../index";
+import PriceLabel from "./PriceLabel";
+import { idlFactory as tokenIdlFactory } from "../../../declarations/token"; // copied /src/declarations/token in /src/declarations inside this project
 
-function Item({ id }) {
+function Item({ id, role }) {
   const [name, setName] = useState();
   const [owner, setOwner] = useState();
   const [img, setImg] = useState();
   const [button, setButton] = useState();
   const [priceInput, setPriceInput] = useState();
+  const [loaderHidden, setLoaderHidden] = useState(true);
+  const [blur, setBlur] = useState();
+  const [sellStatus, setSellStatus] = useState();
+  const [priceLabel, setPriceLabel] = useState();
+  const [shouldDisplay, setShouldDisplay] = useState(true);
 
   // const principalId = Principal.fromText(id);
   const localHost = "http://localhost:8080/";
@@ -35,7 +43,25 @@ function Item({ id }) {
     setOwner(NFTOwner.toText());
     setImg(image);
 
-    setButton(<Button handleClick={handleSell} text={"Sell"} />);
+    if (role === "collection") {
+      const nftIsListed = await opend.isListed(id);
+      if (nftIsListed) {
+        setOwner("OpenD");
+        setBlur({ filter: "blur(4px)" });
+        setSellStatus("Listed");
+      } else {
+        setButton(<Button handleClick={handleSell} text={"Sell"} />);
+      }
+    } else if (role === "discover") {
+      const originalOwner = await opend.getOriginalOwner(id);
+
+      if (originalOwner.toText() != CURRENT_USER_ID.toText()) {
+        setButton(<Button handleClick={handleBuy} text={"Buy"} />);
+      }
+
+      const price = await opend.getListedNFTPrice(id);
+      setPriceLabel(<PriceLabel sellPrice={price.toString()} />);
+    }
   }
 
   let price;
@@ -47,13 +73,41 @@ function Item({ id }) {
   };
 
   const sellItem = async () => {
+    setBlur({ filter: "blur(4px)" });
+    setLoaderHidden(false);
     const listingResult = await opend.listItem(id, Number(price));
-    console.log("listingResult", listingResult);
+
     if (listingResult === "Success") {
       const openDId = await opend.getOpendCanisterID();
       const transferResult = await NFTActor.transferOwnership(openDId);
-      console.log("transferResult", transferResult);
+      if (transferResult === "Success") {
+        setOwner("OpenD");
+        setSellStatus("Listed");
+      }
     }
+    setButton();
+    setPriceInput();
+    setLoaderHidden(true);
+  };
+
+  const handleBuy = async () => {
+    console.log("buy was triggered");
+    setLoaderHidden(false);
+    const tokenActor = await Actor.createActor(tokenIdlFactory, {
+      agent: HTTPagent,
+      canisterId: Principal.fromText("st75y-vaaaa-aaaaa-aaalq-cai"), // after run `dfx canister id token` in the console of token creation project
+    });
+
+    const sellerId = await opend.getOriginalOwner(id);
+    const itemPrice = await opend.getListedNFTPrice(id);
+    console.log(tokenActor);
+    const result = await tokenActor.transfer(sellerId, itemPrice);
+    if (result === "Success") {
+      const transferResult = opend.completePurchase(id, sellerId, CURRENT_USER_ID);
+      console.log(transferResult);
+    }
+    setShouldDisplay(false);
+    setLoaderHidden(true);
   };
 
   useEffect(() => {
@@ -61,13 +115,20 @@ function Item({ id }) {
   }, []);
 
   return (
-    <div className="disGrid-item">
+    <div style={{ display: shouldDisplay ? "inline" : "none" }} className="disGrid-item">
       <div className="disPaper-root disCard-root makeStyles-root-17 disPaper-elevation1 disPaper-rounded">
-        <img className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img" src={img} />
+        <img className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img" src={img} style={blur} />
+        <div className="lds-ellipsis" hidden={loaderHidden}>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
         <div className="disCardContent-root">
+          {priceLabel}
           <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
             {name}
-            <span className="purple-text"></span>
+            <span className="purple-text"> {sellStatus}</span>
           </h2>
           <p className="disTypography-root makeStyles-bodyText-24 disTypography-body2 disTypography-colorTextSecondary">Owner: {owner}</p>
           {priceInput}
